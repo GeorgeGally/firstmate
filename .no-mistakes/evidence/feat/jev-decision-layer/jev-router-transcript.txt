@@ -1,0 +1,100 @@
+## Jev router (throwaway playbook copy at /var/folders/m2/l0h0sk052yng2xk9n51n8y000000gn/T/tmp.MGAk5Kj4tV/pb; real log untouched)
+--- S1 bypass marker 'no jev' (offline kill switch)
+$ jev '{"goal":"answer what 2+2 is, no jev"}'
+{
+  "action": "proceed_full",
+  "reason": "disabled or bypass jev",
+  "mode": "shadow",
+  "jev_used": false,
+  "details": {}
+}
+
+--- S2 bypass marker 'bypass jev' in notes
+$ jev '{"goal":"research topic","notes":"bypass jev"}'
+{
+  "action": "proceed_full",
+  "reason": "disabled or bypass jev",
+  "mode": "shadow",
+  "jev_used": false,
+  "details": {}
+}
+
+--- S3 live routing decision
+$ jev '{"goal":"Compare three browser automation libraries across docs and GitHub issues, then recommend one","tools_available":["browser","web_search"]}'
+{
+  "action": "allow_subagent",
+  "reason": "needs_subagent noul=0.86",
+  "mode": "shadow",
+  "jev_used": true,
+  "details": {
+    "intent": "research",
+    "intent_confidence": 1.0,
+    "intent_probs": {
+      "account": 0.0,
+      "research": 1.0,
+      "browser": 0.0,
+      "chat": 0.0,
+      "coding": 0.0,
+      "write": 0.0,
+      "lookup": 0.0
+    },
+    "reuse_cache": 0.03,
+    "needs_subagent": 0.86,
+    "stop_retry": 0.16,
+    "complexity_0_1": 0.99,
+    "max_browser_sources": 5
+  },
+  "policy": {
+    "honor_in_active_mode": true,
+    "shadow_mode_is_advisory": true
+  }
+}
+
+--- S4 repeated failure
+$ jev '{"goal":"Fix flaky test by re-running it","prior_error":"AssertionError: timeout waiting for pane","same_error_count":3}'
+{
+  "action": "stop_retry",
+  "reason": "stop_retry noul=0.61 same_error_count=3",
+  "mode": "shadow",
+  "jev_used": true,
+  "details": {
+    "intent": "coding",
+    "intent_confidence": 0.72,
+    "intent_probs": {
+      "chat": 0.07,
+      "account": 0.0,
+      "lookup": 0.05,
+      "browser": 0.11,
+      "research": 0.01,
+      "coding": 0.76,
+      "write": 0.0
+    },
+    "reuse_cache": 0.03,
+    "needs_subagent": 0.26,
+    "stop_retry": 0.61,
+    "complexity_0_1": 0.155,
+    "max_browser_sources": 5
+  },
+  "policy": {
+    "honor_in_active_mode": true,
+    "shadow_mode_is_advisory": true
+  }
+}
+
+--- S5 kill switch enabled:false
+$ jev '{"goal":"Spawn two research agents to survey the market"}'
+{
+  "action": "proceed_full",
+  "reason": "disabled or bypass jev",
+  "mode": "shadow",
+  "jev_used": false,
+  "details": {}
+}
+
+--- copy log (logs/runs.jsonl resolved against playbook dir):
+{"ts": "2026-09-25T05:23:33.592727+00:00", "event": "route", "state_goal": "answer what 2+2 is, no jev", "action": "proceed_full", "reason": "disabled or bypass jev", "mode": "shadow", "jev_used": false, "details": {}}
+{"ts": "2026-09-25T05:23:33.690104+00:00", "event": "route", "state_goal": "research topic", "action": "proceed_full", "reason": "disabled or bypass jev", "mode": "shadow", "jev_used": false, "details": {}}
+{"ts": "2026-09-25T05:23:35.305343+00:00", "event": "route", "goal": "Compare three browser automation libraries across docs and GitHub issues, then recommend one", "action": "allow_subagent", "reason": "needs_subagent noul=0.86", "mode": "
+{"ts": "2026-09-25T05:23:36.521757+00:00", "event": "route", "goal": "Fix flaky test by re-running it", "action": "stop_retry", "reason": "stop_retry noul=0.61 same_error_count=3", "mode": "shadow", "details": {"intent": "coding", "intent_c
+{"ts": "2026-09-25T05:23:36.678292+00:00", "event": "route", "state_goal": "Spawn two research agents to survey the market", "action": "proceed_full", "reason": "disabled or bypass jev", "mode": "shadow", "jev_used": false, "details": {}}
+--- real ~/Documents/muse-jev-playbook/logs/runs.jsonl lines before=      24 after=      24

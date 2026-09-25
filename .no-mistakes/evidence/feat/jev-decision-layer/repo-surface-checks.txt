@@ -1,0 +1,20 @@
+## Log path resolves against playbook dir even when invoked from firstmate worktree cwd (/Users/radarboy3000/.no-mistakes/worktrees/002099b29194/01M3BFN9BADV7DJKDD5P7YAZNX)
+worktree has logs/runs.jsonl? no
+playbook-copy logs/runs.jsonl lines:        1
+
+## Doc audience checker
+fm-doc-audience-check: ok surfaces=110 local_links=528
+exit=0
+
+## .gitignore via git check-ignore
+.gitignore:14:skills-lock.json	skills-lock.json
+.gitignore:16:.tools/	.tools/x
+exit=0
+
+## typesafe-ai SKILL.md frontmatter parsed as YAML
+{'name': 'typesafe-ai', 'license': 'MIT', 'metadata': {'internal': True}}
+all skills internal: checked 22
+
+## secret scan of branch diff
+no key material in diff
+real key string absent from diff
