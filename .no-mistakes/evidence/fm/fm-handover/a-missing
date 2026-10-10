@@ -1,0 +1,6 @@
+error: handover: record /var/folders/m2/l0h0sk052yng2xk9n51n8y000000gn/T//fm-lab.W2drLS/out/record-missing.md is not complete; nothing was published and the lock did not move:
+  - unacknowledged captain inbox note 1791657092-OMUSPe is not named in the record
+Start from: fm-lock.sh handover template
+lock line: 17688
+ls: /var/folders/m2/l0h0sk052yng2xk9n51n8y000000gn/T//fm-lab.W2drLS/state/handover.md: No such file or directory
+rc=1

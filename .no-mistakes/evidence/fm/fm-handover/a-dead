@@ -1,0 +1,6 @@
+handover requested from harness pid 17690
+waiting up to 90s for it to write its handover record and pass the lock
+the previous session ended without handing over, so no new handover record exists; rebuild from durable records
+lock acquired: harness pid 17688
+lock: held by live harness pid 17688
+rc=0

@@ -1,0 +1,11 @@
+/Users/radarboy3000/.no-mistakes/worktrees/002099b29194/01M4KFVPYE3VTRFKF7EBF4PK1B/bin/fm-wake-lib.sh: line 2171: /var/folders/m2/l0h0sk052yng2xk9n51n8y000000gn/T//fm-lab.W2drLS/state/.wake-queue: Is a directory
+fm-inbox: note 1791657296-nUzYSS is saved at /var/folders/m2/l0h0sk052yng2xk9n51n8y000000gn/T//fm-lab.W2drLS/state/inbox/1791657296-nUzYSS.note but firstmate was NOT woken
+error: handover: the request note was not saved or did not wake the live session (harness pid 17690), so it would never act on the request; not waiting
+bin/fm-lock.sh handover request --no-start --wait 60  0.20s user 0.45s system 62% cpu 1.037 total
+pending ids:
+1791657091-5p9mrm
+1791657091-FJs1vh
+1791657091-gQZVRZ
+1791657092-OMUSPe
+no request file
+rc=0

@@ -1,0 +1,7 @@
+handover requested from harness pid 17688
+waiting up to 110s for it to write its handover record and pass the lock
+the previous session handed over; record at /var/folders/m2/l0h0sk052yng2xk9n51n8y000000gn/T//fm-lab.W2drLS/state/handover.md
+lock acquired: harness pid 17690
+lock line now: 17690
+lock: held by live harness pid 17690
+rc=0

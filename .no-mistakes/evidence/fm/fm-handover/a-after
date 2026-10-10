@@ -1,0 +1,4 @@
+error: handover: this session does not hold the session lock; only the live owner writes or releases a handover
+error: handover: this session does not hold the session lock; only the live owner writes or releases a handover
+lock: held by live harness pid 17690
+rc=0

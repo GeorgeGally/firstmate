@@ -1,0 +1,29 @@
+## Work in progress
+<fill in: each piece of work under way - what it is, the files it touches, and the exact local copy (path) it lives in, so the incoming session keeps working there and not in some other worktree; or write: none>
+
+## Open captain asks
+<fill in: every captain ask not yet captured in the backlog, and what is owed on each; or write: none>
+Unacknowledged captain inbox notes (keep every id named here):
+- note 1791657091-5p9mrm: GN site: swap hero photo to the market shot - <fill in: handled, in progress, or not started>
+- note 1791657091-FJs1vh: GN site: fix footer phone number - <fill in: handled, in progress, or not started>
+- note 1791657091-gQZVRZ: GN site: add Christmas schedule page - <fill in: handled, in progress, or not started>
+- note 1791657092-OMUSPe: GN site: compress gallery images - <fill in: handled, in progress, or not started>
+
+## Promises to the captain
+<fill in: what this session told the captain it would do or report, and when; or write: none>
+
+## Facts not yet in durable records
+<fill in: captain decisions and facts given only in chat, such as a project posture; write each to its owner first where one exists and name it here; or write: none>
+
+## Steers not yet reflected in status
+<fill in: steers sent to workers whose effect has not shown up in their status yet; or write: none>
+
+## Projects and local copies
+Registry (data/projects.md), including each live copy location:
+- goodneighbours [no-mistakes] - Good Neighbours site; live copy ~/Documents/goodneighbours (added 2026-10-01)
+- firstmate clone: projects/goodneighbours
+
+error: handover: record /var/folders/m2/l0h0sk052yng2xk9n51n8y000000gn/T//fm-lab.W2drLS/out/tmpl.md is not complete; nothing was published and the lock did not move:
+  - template placeholders remain (lines containing "<fill in")
+Start from: fm-lock.sh handover template
+rc=1

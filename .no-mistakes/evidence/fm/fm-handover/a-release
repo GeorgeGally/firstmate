@@ -1,0 +1,4 @@
+lock handed over to harness pid 17690 with record /var/folders/m2/l0h0sk052yng2xk9n51n8y000000gn/T//fm-lab.W2drLS/state/handover.md
+This session no longer holds the lock: stay read-only - do not spawn, steer, merge, drain or acknowledge wakes, or answer captain notes.
+lock line: 17690
+rc=0

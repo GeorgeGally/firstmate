@@ -1,0 +1,16 @@
+{
+  "schema": "fm-handover.v1",
+  "lock": {
+    "state": "held",
+    "pid": 17690
+  },
+  "record": {
+    "path": "/var/folders/m2/l0h0sk052yng2xk9n51n8y000000gn/T//fm-lab.W2drLS/state/handover.md",
+    "kind": "snapshot",
+    "from_pid": 17690,
+    "to_pid": null,
+    "written_at": 1791657281,
+    "body": "## Work in progress\n- Good Neighbours Christmas page: snapshot: christmas.html done, now gallery in the live copy ~/Documents/goodneighbours (NOT a firstmate worktree; work happens in Documents).\n\n## Open captain asks\nUnacknowledged captain inbox notes (keep every id named here):\n- note 1791657091-5p9mrm: GN site: swap hero photo - in progress\n- note 1791657091-FJs1vh: GN site: fix footer phone number - not started\n- note 1791657091-gQZVRZ: GN site: add Christmas schedule page - in progress\n- note 1791657092-OMUSPe: GN site: compress gallery images - not started\n\n## Promises to the captain\n- Told captain the Christmas page preview would be ready by 18:00.\n\n## Facts not yet in durable records\n- Captain: Good Neighbours merges are fine to auto-merge (project registered).\n\n## Steers not yet reflected in status\nnone\n\n## Projects and local copies\n- goodneighbours - live copy ~/Documents/goodneighbours\n"
+  },
+  "request": null
+}

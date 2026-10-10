@@ -1,0 +1,29 @@
+HANDOVER REQUESTED (snapshot) at 2026-10-10T18:34:31Z
+ACTION for this lock-holding session: fm-lock.sh handover template > <file>, fill every section, then fm-lock.sh handover write <file>.
+release handover record written 2026-10-10T18:33:15Z by harness pid 17688 for harness pid 17690 (/var/folders/m2/l0h0sk052yng2xk9n51n8y000000gn/T//fm-lab.W2drLS/state/handover.md)
+Act on it before new work: resume each piece in the local copy it names and settle every open ask and promise.
+
+## Work in progress
+- Good Neighbours Christmas page: editing src/pages/christmas.html in the live copy ~/Documents/goodneighbours (NOT a firstmate worktree; work happens in Documents).
+
+## Open captain asks
+Unacknowledged captain inbox notes (keep every id named here):
+- note 1791657091-5p9mrm: GN site: swap hero photo - in progress
+- note 1791657091-FJs1vh: GN site: fix footer phone number - not started
+- note 1791657091-gQZVRZ: GN site: add Christmas schedule page - in progress
+- note 1791657092-OMUSPe: GN site: compress gallery images - not started
+
+## Promises to the captain
+- Told captain the Christmas page preview would be ready by 18:00.
+
+## Facts not yet in durable records
+- Captain: Good Neighbours merges are fine to auto-merge (project registered).
+
+## Steers not yet reflected in status
+none
+
+## Projects and local copies
+- goodneighbours - live copy ~/Documents/goodneighbours
+handover record written: /var/folders/m2/l0h0sk052yng2xk9n51n8y000000gn/T//fm-lab.W2drLS/state/handover.md (this session keeps the lock)
+lock: held by live harness pid 17690
+rc=0

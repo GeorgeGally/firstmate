@@ -1,0 +1,50 @@
+
+⏺ Captain, this session can no longer release or write a handover. Both attempts were refused, and the lock is still with the other session.
+
+  - Repeat release: refused with this session does not hold the session lock; only the live owner writes or releases a handover.
+  - write: refused with the same error.
+  - status: held by live harness pid 17690, so neither refusal disturbed the lock.
+
+  The rc=0 is again status's exit code, not either refusal's.
+
+  So far the lab has confirmed four behaviours: an unfilled template is rejected, a record missing an inbox note is rejected, a complete record transfers the lock, and the old session loses write and
+  release rights afterwards. The receiving session's startup has not been tested yet: pid 17690 should pick up state/handover.md there.
+
+✻ Cooked for 9s · done 1:34 AM
+
+! { time bin/fm-lock.sh handover request --no-start --wait 60; echo "pending ids:"; bin/fm-inbox.sh list --ids; ls -a $FM_HOME/state | grep handover-request || echo "no request file"; } >
+  /var/folders/m2/l0h0sk052yng2xk9n51n8y000000gn/T//fm-lab.W2drLS/out/a-nowake 2>&1; echo rc=$? >> /var/folders/m2/l0h0sk052yng2xk9n51n8y000000gn/T//fm-lab.W2drLS/out/a-nowake
+  ⎿  (Bash completed with no output)
+
+  Read 1 file, listed 1 directory, ran 1 shell command
+
+⏺ Captain, when the wake fails, the request now gives up straight away, and it no longer leaves a note behind in the inbox. That's the fix from the latest commit.
+
+  - Setup: you turned the wake queue into a directory, so the wake fails with .wake-queue: Is a directory (fm-wake-lib.sh:2171).
+  - Request: it saved note 1791657296-nUzYSS, saw the wake hadn't reached pid 17690, and stopped with not waiting. That took about 1s, not the 60s wait.
+  - Note handling: the note went to inbox/handled/, not pending. The pending list shows only the four original notes. The fix holds: nothing orphaned.
+  - Request file: none was left.
+  - rc=0: from the last command in the group again. The request's own exit code wasn't captured.
+
+  Two smaller points:
+  1. fm-inbox still prints is saved ... but firstmate was NOT woken just before the note is acknowledged. That message is stale by the time the run finishes and could make someone think a note is
+     still waiting. A wording fix would help.
+  2. The duplicate-check marker .requests/handover-takeover-17688-1791657296 stays behind for a request that failed. A retry in a later second gets a new id, so it's harmless. A retry within the same
+     second would match it and replay the note that was already handled. This is the open one-second-id question from earlier, and it's still open.
+
+✻ Worked for 29s · done 1:35 AM
+
+! { bin/fm-lock.sh handover request --no-start --wait 90; bin/fm-lock.sh status; } > /var/folders/m2/l0h0sk052yng2xk9n51n8y000000gn/T//fm-lab.W2drLS/out/a-dead 2>&1; echo rc=$? >>
+  /var/folders/m2/l0h0sk052yng2xk9n51n8y000000gn/T//fm-lab.W2drLS/out/a-dead
+  ⎿  (Bash completed with no output)
+
+  Inspecting leftover request note and handover record
+  ⎿  $ S=/var/folders/m2/l0h0sk052yng2xk9n51n8y000000gn/T//fm-lab.W2drLS/state; cat $S/inbox/1791657326-03Um27.note; echo ---; ls -la $S | grep -i handover
+
+✳ Simmering… (18s · ↓ 536 tokens · thinking)
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+❯ 
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   Opus 5.5  ctx:7%
+  ⏵⏵ auto mode on (shift+tab to cycle) · ← 2 agents
