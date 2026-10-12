@@ -54,7 +54,7 @@ The guard remains a backstop.
 
 ## Guard predicates
 
-The turn-end guard checks primary scope first, then supervision need, then watcher health.
+The turn-end guard checks primary scope first, then unread captain notes, then supervision need, then watcher health.
 The mid-turn pull warning in `bin/fm-guard.sh` judges watcher health differently, as described under [pull-warning verdict by supervision model](#pull-warning-verdict-by-supervision-model).
 
 ### Primary scope
@@ -69,6 +69,20 @@ The marker must meet both of these conditions:
 An unmarked checkout or invalid marker falls through to the git-dir check.
 That check keeps crewmate and scout linked worktrees inert because their git dir differs from their git common dir.
 It also requires `AGENTS.md`, `bin/`, and the effective state directory.
+
+### Unread captain notes
+
+Before any supervision check, the guard reads `state/.wake-queue` directly.
+A captain inbox note wake (the `check` row keyed `inbox:<id>` that `bin/fm-inbox.sh` appends) still queued more than `FM_TURNEND_NOTE_MAX_AGE` seconds (default 60) after it was appended blocks the turn end with the drain-first instruction.
+It blocks whatever watcher health, supervision need, or the supervision host reports, because a watcher that keeps beating without ever closing a cycle reads as healthy to every later check while the note waits.
+A drain's post-handling acknowledgement removes the row, which clears the block.
+
+The check has these limits:
+
+- Away and quiet mode are exempt, because the daemon drains and acknowledges the queue there.
+- In `--claude` mode a session that does not own the session lock is exempt, because it must not drain.
+- The same session blocking over the same unchanged set of overdue rows stops after `FM_CLAUDE_TURNEND_BLOCK_BUDGET` consecutive blocks and falls through to the ordinary checks, so a row that cannot be drained never wedges the session.
+- A new overdue note or an acknowledgement changes that set and starts a fresh count, recorded in `state/.turnend-note-blocks`.
 
 ### Supervision need
 
@@ -549,6 +563,7 @@ That warning uses `bin/fm-supervision-instructions.sh --repair-line`, so it alwa
 - Child-worktree exclusion.
 - `FM_HOME` and `FM_STATE_OVERRIDE` precedence.
 - The live-lock and fresh-beacon guard predicate.
+- The unread captain note block over a beating watcher, its age and acknowledgement negatives, idle-home and away-mode scope, and its bounded re-block.
 - The cooperative `--claude` open-generation claim wait.
 - Monotonic failed-epoch progression.
 - Bounded attended fail-open.

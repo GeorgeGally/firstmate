@@ -216,6 +216,68 @@ budget_reset() {
   fm_lock_release "$BUDGET_LOCK"
 }
 
+# --- unread captain note backstop ---------------------------------------------
+# The watcher and auto-arm deliver queued wakes, but a watcher that keeps
+# beating without ever closing reads as healthy to every check below while
+# captain inbox notes sit undrained. So read the durable queue directly first:
+# a captain inbox note wake (bin/fm-inbox.sh appends it as a check row keyed
+# inbox:<id>) older than NOTE_MAX_AGE that no drain has acknowledged blocks the
+# stop whatever watcher health, supervision need, or the supervision host says.
+# Away mode is exempt because the daemon drains and acknowledges the queue
+# there, and in --claude mode a session that does not own the home lock is
+# exempt because it must not drain. The block is bounded: the same session
+# re-blocking over the same unchanged set of overdue rows stops after
+# BLOCK_BUDGET consecutive blocks and falls through to the ordinary checks, so
+# a row that cannot be drained never wedges the session; a new overdue note or
+# an acknowledgement changes the set and starts a fresh count.
+NOTE_MAX_AGE=${FM_TURNEND_NOTE_MAX_AGE:-60}
+case "$NOTE_MAX_AGE" in ''|*[!0-9]*) NOTE_MAX_AGE=60 ;; esac
+NOTE_BLOCKS_FILE="$STATE/.turnend-note-blocks"
+unread_note_backstop() {
+  local now overdue count oldest key old_key old_count tmp rule
+  [ ! -e "$STATE/.afk" ] || return 0
+  now=$(date +%s)
+  overdue=$(awk -F '\t' -v now="$now" -v max="$NOTE_MAX_AGE" '
+    NF >= 5 && $1 ~ /^[0-9]+$/ && $2 ~ /^[0-9]+$/ && $3 == "check" && $4 ~ /^inbox:/ \
+      && now - $1 > max {
+        n++; seqs = seqs " " $2
+        if (oldest == "" || $1 < oldest) oldest = $1
+      }
+    END { if (n) printf "%d %d%s\n", n, now - oldest, seqs }
+  ' "$STATE/.wake-queue" 2>/dev/null || true)
+  if [ -z "$overdue" ]; then
+    rm -f "$NOTE_BLOCKS_FILE" 2>/dev/null || true
+    return 0
+  fi
+  if [ "$CLAUDE_MODE" -eq 1 ] && fm_session_lock_foreign_owner_live "$STATE"; then
+    return 0
+  fi
+  count=${overdue%% *}
+  oldest=${overdue#* }
+  oldest=${oldest%% *}
+  key="$SESSION_ID ${overdue#* * }"
+  old_key=$(sed -n '1p' "$NOTE_BLOCKS_FILE" 2>/dev/null || true)
+  old_count=$(sed -n '2p' "$NOTE_BLOCKS_FILE" 2>/dev/null || true)
+  case "$old_count" in ''|*[!0-9]*) old_count=0 ;; esac
+  [ "$old_key" = "$key" ] || old_count=0
+  old_count=$((old_count + 1))
+  tmp="$NOTE_BLOCKS_FILE.tmp.$$"
+  if printf '%s\n%s\n' "$key" "$old_count" > "$tmp" 2>/dev/null; then
+    mv -f "$tmp" "$NOTE_BLOCKS_FILE" 2>/dev/null || rm -f "$tmp" 2>/dev/null || true
+  fi
+  [ "$old_count" -le "$BLOCK_BUDGET" ] || return 0
+  rule='━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'
+  {
+    printf '●%s\n' "$rule"
+    printf '●  TURN WOULD END WITH A CAPTAIN NOTE UNREAD\n'
+    printf '●  %s captain inbox note wake(s) in the wake queue have waited more than %ss unacknowledged (oldest: %ss), whatever watcher health says.\n' "$count" "$NOTE_MAX_AGE" "$oldest"
+    printf '●  Run bin/fm-wake-drain.sh first, handle the wake, then run its exact WAKE_ACK_REQUIRED --ack-through command before ending the turn.\n'
+    printf '●%s\n' "$rule"
+  } >&2
+  exit 2
+}
+unread_note_backstop
+
 fm_supervision_status "$STATE" "$GRACE"
 if [ "$FM_SUP_NEEDED" = false ]; then
   [ -e "$FAILURE_NOTICE" ] || budget_reset
