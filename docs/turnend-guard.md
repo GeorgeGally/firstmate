@@ -79,10 +79,13 @@ A drain's post-handling acknowledgement removes the row, which clears the block.
 
 The check has these limits:
 
-- Away and quiet mode are exempt, because the daemon drains and acknowledges the queue there.
+- Away and quiet mode are exempt only while a live identity-matched daemon owns supervision (`fm_afk_daemon_owns_supervision`), because that daemon drains and acknowledges the queue.
+- A `state/.afk` record with no live daemon is not exempt, because this session still owns draining.
 - In `--claude` mode a session that does not own the session lock is exempt, because it must not drain.
-- The same session blocking over the same unchanged set of overdue rows stops after `FM_CLAUDE_TURNEND_BLOCK_BUDGET` consecutive blocks and falls through to the ordinary checks, so a row that cannot be drained never wedges the session.
-- A new overdue note or an acknowledgement changes that set and starts a fresh count, recorded in `state/.turnend-note-blocks`.
+- The bound is per turn.
+- Within one turn, the same session blocking over the same unchanged set of overdue rows stops after `FM_CLAUDE_TURNEND_BLOCK_BUDGET` consecutive blocks and falls through to the ordinary checks, so a row that cannot be drained never wedges the session.
+- That allowed stop is never silent: it carries one visible notice naming the unread notes and saying the stop was allowed only to avoid a loop, as the single `--claude` stdout `systemMessage`.
+- The first stop of a turn (`stop_hook_active` or `stopHookActive` false), a new overdue note, or an acknowledgement starts a fresh count, recorded in `state/.turnend-note-blocks`, so a note that stays unread blocks again on every later turn.
 
 ### Supervision need
 
@@ -563,7 +566,7 @@ That warning uses `bin/fm-supervision-instructions.sh --repair-line`, so it alwa
 - Child-worktree exclusion.
 - `FM_HOME` and `FM_STATE_OVERRIDE` precedence.
 - The live-lock and fresh-beacon guard predicate.
-- The unread captain note block over a beating watcher, its age and acknowledgement negatives, idle-home and away-mode scope, and its bounded re-block.
+- The unread captain note block over a beating watcher, its age and acknowledgement negatives, idle-home scope, its away-mode exemption only under a live daemon, its per-turn bounded re-block, and the visible notice when that bound is spent.
 - The cooperative `--claude` open-generation claim wait.
 - Monotonic failed-epoch progression.
 - Bounded attended fail-open.

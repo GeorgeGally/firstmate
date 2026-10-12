@@ -2271,10 +2271,27 @@ test_hook_blocks_overdue_note_in_idle_home_default_mode() {
   out=$(run_hook "$dir" false); status=$?
   expect_code 2 "$status" "an overdue captain note must block even with no supervision need"
   assert_contains "$out" "CAPTAIN NOTE UNREAD" "the idle-home block must name the unread captain note"
-  : > "$dir/state/.afk"
+  pass "fm-turnend-guard: an overdue captain note blocks an idle home"
+}
+
+test_hook_overdue_note_away_exemption_needs_live_daemon() {
+  local dir out status daemon_pid
+  dir=$(make_primary_dir "$TMP_ROOT/hook-note-afk")
+  queue_note_wake "$dir" 90 1
+  printf 'quiet\n' > "$dir/state/.afk"
   out=$(run_hook "$dir" false); status=$?
-  expect_code 0 "$status" "away mode leaves the queue to its daemon and must not block on the note"
-  pass "fm-turnend-guard: an overdue captain note blocks an idle home, but not in away mode"
+  expect_code 2 "$status" "a quiet-mode record with no daemon leaves draining to main, so the overdue note must block"
+  assert_contains "$out" "CAPTAIN NOTE UNREAD" "the no-daemon block must name the unread captain note"
+  record_daemon_lock "$dir" "$(nonexistent_pid)" stale-identity || fail "could not record the dead daemon lock"
+  out=$(run_hook "$dir" false); status=$?
+  expect_code 2 "$status" "an away record whose daemon has died must still block on the overdue note"
+  sleep 60 &
+  daemon_pid=$!
+  record_daemon_lock "$dir" "$daemon_pid" || { stop_watcher "$daemon_pid"; fail "could not record the live daemon lock"; }
+  out=$(run_hook "$dir" false); status=$?
+  stop_watcher "$daemon_pid"
+  expect_code 0 "$status" "a live identity-matched daemon drains the queue, so the note must not block"
+  pass "fm-turnend-guard: the away/quiet note exemption needs a live daemon that owns supervision"
 }
 
 test_hook_claude_mode_overdue_note_block_is_bounded() {
@@ -2287,11 +2304,32 @@ test_hook_claude_mode_overdue_note_block_is_bounded() {
   done
   out=$(run_hook_claude "$dir" true); status=$?
   expect_code 0 "$status" "the same undrainable note must stop blocking once the budget is spent"
+  [ "$(printf '%s\n' "$out" | grep -c .)" -eq 1 ] || fail "the exhausted bound must print exactly one stdout line: $out"
+  printf '%s' "$out" | jq -e '.systemMessage | contains("inbox:note-1") and contains("only to avoid a stop-hook loop")' >/dev/null \
+    || fail "the exhausted bound must print one visible systemMessage naming the unread note: $out"
   queue_note_wake "$dir" 120 2
   out=$(run_hook_claude "$dir" true); status=$?
   expect_code 2 "$status" "a newly overdue note must start a fresh bounded block"
   assert_contains "$out" "2 captain inbox note wake(s)" "the fresh block must count both overdue notes"
-  pass "fm-turnend-guard --claude: the unread-note block is bounded and restarts on a new overdue note"
+  pass "fm-turnend-guard --claude: the unread-note block is bounded, notices its fall-through, and restarts on a new overdue note"
+}
+
+test_hook_claude_mode_overdue_note_reblocks_next_turn() {
+  local dir out status i
+  dir=$(make_primary_dir "$TMP_ROOT/hook-note-next-turn")
+  queue_note_wake "$dir" 120 1
+  out=$(run_hook_claude "$dir" false); status=$?
+  expect_code 2 "$status" "the first stop of the turn must block on the overdue note"
+  for i in 2 3; do
+    out=$(run_hook_claude "$dir" true); status=$?
+    expect_code 2 "$status" "block $i of the turn must block the stop"
+  done
+  out=$(run_hook_claude "$dir" true); status=$?
+  expect_code 0 "$status" "the turn's bound must be spent after three blocks"
+  out=$(run_hook_claude "$dir" false); status=$?
+  expect_code 2 "$status" "a later turn must block again on the same still-unread note"
+  assert_contains "$out" "CAPTAIN NOTE UNREAD" "the later-turn block must name the unread captain note"
+  pass "fm-turnend-guard --claude: a still-unread note blocks again on every later turn"
 }
 
 test_predicate_healthy_no_inflight
@@ -2386,4 +2424,6 @@ test_hook_no_afk_ignores_poll_derived_grace
 test_hook_claude_mode_blocks_overdue_note_despite_healthy_watcher
 test_hook_allows_young_or_acknowledged_note
 test_hook_blocks_overdue_note_in_idle_home_default_mode
+test_hook_overdue_note_away_exemption_needs_live_daemon
 test_hook_claude_mode_overdue_note_block_is_bounded
+test_hook_claude_mode_overdue_note_reblocks_next_turn
