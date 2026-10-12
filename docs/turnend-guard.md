@@ -85,7 +85,9 @@ The check has these limits:
 - The bound is per turn.
 - Within one turn, the same session blocking over the same unchanged set of overdue rows stops after `FM_CLAUDE_TURNEND_BLOCK_BUDGET` consecutive blocks and falls through to the ordinary checks, so a row that cannot be drained never wedges the session.
 - That allowed stop is never silent: it carries one visible notice naming the unread notes and saying the stop was allowed only to avoid a loop, as the single `--claude` stdout `systemMessage`.
-- The first stop of a turn (`stop_hook_active` or `stopHookActive` false), a new overdue note, or an acknowledgement starts a fresh count, recorded in `state/.turnend-note-blocks`, so a note that stays unread blocks again on every later turn.
+- The first stop of a turn (`stop_hook_active` or `stopHookActive` false), a new overdue note, or an acknowledgement starts a fresh count, recorded in `state/.turnend-note-blocks`, so a note that stays unread blocks again on a later user-started turn.
+- In `--claude` mode a turn started by a stop-hook continuation, such as an asyncRewake, also reports `stop_hook_active` true.
+- So once the bound is spent, such a turn ends with the visible notice instead of blocking again on the same unchanged set of overdue notes.
 
 ### Supervision need
 

@@ -248,7 +248,10 @@ budget_reset() {
 # BLOCK_BUDGET consecutive blocks, records one visible notice naming the unread
 # notes, and falls through to the ordinary checks, so a row that cannot be
 # drained never wedges the session. The first stop of a turn (stop hook not
-# active), a new overdue note, or an acknowledgement starts a fresh count.
+# active), a new overdue note, or an acknowledgement starts a fresh count. In
+# --claude mode a turn started by a stop-hook continuation such as an
+# asyncRewake also reports the stop hook active, so once the bound is spent
+# such a turn ends with the visible notice instead of blocking again.
 NOTE_MAX_AGE=${FM_TURNEND_NOTE_MAX_AGE:-60}
 case "$NOTE_MAX_AGE" in ''|*[!0-9]*) NOTE_MAX_AGE=60 ;; esac
 NOTE_BLOCKS_FILE="$STATE/.turnend-note-blocks"
