@@ -1,0 +1,76 @@
+### wake queue (real fm-inbox.sh note, age 74s)
+1791790751	1	check	inbox:1791790751-SYtvUG	check: captain inbox note 1791790751-SYtvUG - Captain: please review the deploy plan before lunch
+
+### S-regression: BASE commit 20dcbf91 guard --claude, idle home, overdue note
+[exit=0]
+
+### S1: TARGET 27c50965 guard --claude, first stop of turn
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  TURN WOULD END WITH A CAPTAIN NOTE UNREAD
+●  1 captain inbox note wake(s) in the wake queue have waited more than 60s unacknowledged (oldest: 75s), whatever watcher health says.
+●  Run bin/fm-wake-drain.sh first, handle the wake, then run its exact WAKE_ACK_REQUIRED --ack-through command before ending the turn.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[exit=2]
+
+### S1b: TARGET default (codex) mode
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  TURN WOULD END WITH A CAPTAIN NOTE UNREAD
+●  1 captain inbox note wake(s) in the wake queue have waited more than 60s unacknowledged (oldest: 75s), whatever watcher health says.
+●  Run bin/fm-wake-drain.sh first, handle the wake, then run its exact WAKE_ACK_REQUIRED --ack-through command before ending the turn.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[exit=2]
+
+### S2: per-turn bound in --claude mode (turn start false, then stop-hook continuations true)
+-- stop_hook_active=false
+●  TURN WOULD END WITH A CAPTAIN NOTE UNREAD
+[exit=2]
+-- stop_hook_active=true
+●  TURN WOULD END WITH A CAPTAIN NOTE UNREAD
+[exit=2]
+-- stop_hook_active=true
+●  TURN WOULD END WITH A CAPTAIN NOTE UNREAD
+[exit=2]
+-- stop_hook_active=true
+[exit=0]
+[exit=0]
+-- stdout only of the 4th (bound-spent) stop, must be exactly one JSON object:
+{"systemMessage":"FIRSTMATE CAPTAIN NOTE STILL UNREAD: 1 captain inbox note wake(s) (inbox:1791790751-SYtvUG) have waited more than 60s unacknowledged (oldest: 84s). This stop was allowed only to avoid a stop-hook loop after 3 blocks this turn; run bin/fm-wake-drain.sh, handle the notes, and acknowledge them."}
+[exit=0]
+-- JSON object count: 1
+
+### S3: later user-started turn (stop_hook_active=false) re-blocks on same still-unread note
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  TURN WOULD END WITH A CAPTAIN NOTE UNREAD
+●  1 captain inbox note wake(s) in the wake queue have waited more than 60s unacknowledged (oldest: 84s), whatever watcher health says.
+●  Run bin/fm-wake-drain.sh first, handle the wake, then run its exact WAKE_ACK_REQUIRED --ack-through command before ending the turn.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[exit=2]
+
+### S4 adversarial: quiet-mode record state/.afk present but no live daemon -> still blocks
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  TURN WOULD END WITH A CAPTAIN NOTE UNREAD
+●  1 captain inbox note wake(s) in the wake queue have waited more than 60s unacknowledged (oldest: 91s), whatever watcher health says.
+●  Run bin/fm-wake-drain.sh first, handle the wake, then run its exact WAKE_ACK_REQUIRED --ack-through command before ending the turn.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[exit=2]
+[exit=2]
+-- base commit with same state (for contrast):
+[exit=0]
+
+### S5: main drains with real bin/fm-wake-drain.sh
+1791790751	1	check	inbox:1791790751-SYtvUG	check: captain inbox note 1791790751-SYtvUG - Captain: please review the deploy plan before lunch
+WAKE_ACK_REQUIRED: after handling completes run bin/fm-wake-drain.sh --ack-through 1 --recovery-generation 2167.1791790751.J9ZAgI
+
+### S5b: drained (presented) but not yet acknowledged -> guard still blocks
+●  TURN WOULD END WITH A CAPTAIN NOTE UNREAD
+[exit=2]
+
+### S5c: acknowledge with the exact WAKE_ACK_REQUIRED command
+[ack exit=0]
+-- wake queue after ack:
+(end queue)
+-- guard --claude after ack:
+[exit=0]
+-- guard default after ack:
+[exit=0]
+-- note-block counter file present? no
