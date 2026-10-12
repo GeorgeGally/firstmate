@@ -1,0 +1,4 @@
+ok - a resurfacing handling successor stays alive and supervises instead of going blind
+ok - a handling successor closes promptly on a captain note queued while it watches
+ok - an already-presented inbox note does not wake the next successor again
+ok - unacknowledged recovery is announced at most once per generation and the successor stays alive

@@ -1,0 +1,38 @@
+== S1: idle primary's handling successor, captain sends note ==
+[23:20:57] watcher pid=56156 successor=1 holds lock=56158
+[23:20:59] watcher 56156 still running
+$ fm-inbox.sh note 'please rebase project X'
+queued 1791822059-Rwr1NZ
+  please rebase project X
+  firstmate will pick this up at its next check.
+[23:21:01] watcher 56156 EXITED; stdout:
+    | check: captain inbox note queued: inbox:1791822059-Rwr1NZ
+  closed after 2s
+
+== S2: next successor, note 1 still unacknowledged in queue; non-inbox check row appended ==
+[23:21:08] watcher pid=57882 successor=1 holds lock=57884
+$ append non-inbox check row (check pr:123)
+[23:21:14] watcher 57882 still running
+$ fm-inbox.sh note 'second note'
+queued 1791822074-6tqneA
+  second note
+  firstmate will pick this up at its next check.
+[23:21:15] watcher 57882 EXITED; stdout:
+    | check: captain inbox note queued: inbox:1791822074-6tqneA
+
+== S3: ordinary (non-successor) watcher still closes on a note ==
+[23:21:24] watcher pid=65068 successor=0 holds lock=65070
+[23:21:26] watcher 65068 still running
+$ fm-inbox.sh note 'third note'
+queued 1791822086-rMzzfn
+  third note
+  firstmate will pick this up at its next check.
+[23:21:27] watcher 65068 EXITED; stdout:
+    | check: rearm-resurface
+
+== queue file ==
+1791822059	1	check	inbox:1791822059-Rwr1NZ	check: captain inbox note 1791822059-Rwr1NZ - please rebase project X
+1791822068	2	check	pr:123	unrelated check
+1791822074	3	check	inbox:1791822074-6tqneA	check: captain inbox note 1791822074-6tqneA - second note
+1791822086	4	check	inbox:1791822086-rMzzfn	check: captain inbox note 1791822086-rMzzfn - third note
+lab removed: yes
