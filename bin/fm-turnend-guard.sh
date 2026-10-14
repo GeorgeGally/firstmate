@@ -257,6 +257,7 @@ case "$NOTE_MAX_AGE" in ''|*[!0-9]*) NOTE_MAX_AGE=60 ;; esac
 NOTE_BLOCKS_FILE="$STATE/.turnend-note-blocks"
 unread_note_backstop() {
   local now overdue count oldest notes key old_key old_count tmp rule
+  [ -e "$CONFIG/unread-note-backstop" ] || return 0
   ! fm_afk_daemon_owns_supervision "$STATE" || return 0
   now=$(date +%s)
   overdue=$(awk -F '\t' -v now="$now" -v max="$NOTE_MAX_AGE" '

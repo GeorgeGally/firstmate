@@ -2202,8 +2202,22 @@ test_hook_no_afk_ignores_poll_derived_grace() {
 # queue_note_wake <dir> <age-seconds> <seq> [key]
 queue_note_wake() {
   local dir=$1 age=$2 seq=$3 key=${4:-inbox:note-$3}
+  mkdir -p "$dir/config"
+  : > "$dir/config/unread-note-backstop"
   printf '%s\t%s\tcheck\t%s\tcheck: captain inbox note %s - summary\n' \
     "$(( $(date +%s) - age ))" "$seq" "$key" "$seq" >> "$dir/state/.wake-queue"
+}
+
+test_hook_allows_overdue_note_when_backstop_disabled() {
+  local dir out status
+  dir=$(make_primary_dir "$TMP_ROOT/hook-note-disabled")
+  queue_note_wake "$dir" 90 1
+  rm -f "$dir/config/unread-note-backstop"
+  out=$(run_hook "$dir" false); status=$?
+  expect_code 0 "$status" "an overdue captain note must not block when the opt-in config is absent"
+  [ -z "$out" ] || fail "disabled unread-note backstop produced output: $out"
+  [ ! -e "$dir/state/.turnend-note-blocks" ] || fail "disabled unread-note backstop wrote block state"
+  pass "fm-turnend-guard: unread captain note backstop is off when config/unread-note-backstop is absent"
 }
 
 # Start a live identity-matched watcher holder with a fresh beacon and the
@@ -2425,5 +2439,6 @@ test_hook_claude_mode_blocks_overdue_note_despite_healthy_watcher
 test_hook_allows_young_or_acknowledged_note
 test_hook_blocks_overdue_note_in_idle_home_default_mode
 test_hook_overdue_note_away_exemption_needs_live_daemon
+test_hook_allows_overdue_note_when_backstop_disabled
 test_hook_claude_mode_overdue_note_block_is_bounded
 test_hook_claude_mode_overdue_note_reblocks_next_turn

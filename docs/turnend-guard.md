@@ -72,7 +72,8 @@ It also requires `AGENTS.md`, `bin/`, and the effective state directory.
 
 ### Unread captain notes
 
-Before any supervision check, the guard reads `state/.wake-queue` directly.
+A home opts into this backstop by creating the local, gitignored `config/unread-note-backstop` file; without it, unread notes do not affect turn ends.
+When enabled, the guard reads `state/.wake-queue` directly before any supervision check.
 A captain inbox note wake (the `check` row keyed `inbox:<id>` that `bin/fm-inbox.sh` appends) still queued more than `FM_TURNEND_NOTE_MAX_AGE` seconds (default 60) after it was appended blocks the turn end with the drain-first instruction.
 It blocks whatever watcher health, supervision need, or the supervision host reports, because a watcher that keeps beating without ever closing a cycle reads as healthy to every later check while the note waits.
 A drain's post-handling acknowledgement removes the row, which clears the block.
