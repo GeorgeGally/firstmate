@@ -1,0 +1,29 @@
+# Live Claude Code primary, same session, after: touch $LAB/config/unread-note-backstop
+# config dir: [startup-memory-budget
+unread-note-backstop]
+# wake queue after turn: []
+# pane:
+ ▐▛███▛█   Claude Code v2.1.299
+▝▜██████▀  Opus 5.5 · Claude Max
+ ▝▝   ▝▝   /private/var/folders/m2/l0h0sk052yng2xk9n51n8y000000gn/T/fm-gatewk.C9z6Cw/fm
+❯ Lab test: reply with exactly the word PONG and nothing else. Do not run any tools.
+⏺ PONG
+✻ Crunched for 4s · done 5:52 PM
+❯ Lab test 2: reply with exactly the word PONG2 and nothing else.
+⏺ PONG2
+⏺ Ran 3 stop hooks
+  ⎿  Stop hook error: [[ -z "${GROK_AGENT:-}${GROK_HOOK_EVENT:-}" ] || exit 0; exec "$CLAUDE_PROJECT_DIR"/bin/fm-turnend-guard.sh --claude]:
+  ●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ●  TURN WOULD END WITH A CAPTAIN NOTE UNREAD
+  ●  1 captain inbox note wake(s) in the wake queue have waited more than 5s unacknowledged (oldest: 68s), whatever watcher health says.
+  ●  Run bin/fm-wake-drain.sh first, handle the wake, then run its exact WAKE_ACK_REQUIRED --ack-through command before ending the turn.
+  ●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Ran 3 shell commands
+⏺ Captain, I read both of your notes ("lab captain note: please read me" and "live lab note two") and marked them handled. Neither asked for any work, so I took no other action. Nothing is waiting on
+  you.
+✻ Churned for 27s · done 5:54 PM
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+❯ 
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   Opus 5.5  ctx:6%
+  ⏵⏵ auto mode on (shift+tab to cycle) · ← 1 agent

@@ -1,0 +1,10 @@
+## Scenario E (re-run in bash): opted in, drain + acknowledge with exact WAKE_ACK_REQUIRED command
+config flag present: unread-note-backstop
+1791971387	1	check	inbox:1791971387-uPuz1z	check: captain inbox note 1791971387-uPuz1z - lab captain note: please read me
+WAKE_ACK_REQUIRED: after handling completes run bin/fm-wake-drain.sh --ack-through 1 --recovery-generation 14323.1791971388.JpujzR
+$ bin/fm-wake-drain.sh --ack-through 1 --recovery-generation 14323.1791971388.JpujzR
+ack exit=0
+queue now: []
+after ack default mode: exit=0 output=[]
+after ack --claude: exit=0 output=[]
+block-state file present? no

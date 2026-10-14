@@ -1,0 +1,25 @@
+## Scenario C (re-run with full output): opted in, --claude, one turn: stop_hook_active false, then true x3
+stop 1: exit=2
+stop 2: exit=2 stdout=[]
+stop 3: exit=2 stdout=[]
+stop 4: exit=0 stdout=[{"systemMessage":"FIRSTMATE CAPTAIN NOTE STILL UNREAD: 1 captain inbox note wake(s) (inbox:1791971387-uPuz1z) have waited more than 1s unacknowledged (oldest: 32s). This stop was allowed only to avoid a stop-hook loop after 3 blocks this turn; run bin/fm-wake-drain.sh, handle the notes, and acknowledge them."}]
+
+## Scenario E (re-run): drain + acknowledge with exact WAKE_ACK_REQUIRED command
+1791971387	1	check	inbox:1791971387-uPuz1z	check: captain inbox note 1791971387-uPuz1z - lab captain note: please read me
+WAKE_ACK_REQUIRED: after handling completes run bin/fm-wake-drain.sh --ack-through 1 --recovery-generation 14323.1791971388.JpujzR
+$ bin/fm-wake-drain.sh --ack-through 1 --recovery-generation 14323.1791971388.JpujzR
+usage: fm-wake-drain.sh [--ack-through SEQUENCE --recovery-generation GENERATION]
+ack exit=2
+queue now: [1791971387	1	check	inbox:1791971387-uPuz1z	check: captain inbox note 1791971387-uPuz1z - lab captain note: please read me]
+after ack default mode: exit=2 output=[●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  TURN WOULD END WITH A CAPTAIN NOTE UNREAD
+●  1 captain inbox note wake(s) in the wake queue have waited more than 1s unacknowledged (oldest: 32s), whatever watcher health says.
+●  Run bin/fm-wake-drain.sh first, handle the wake, then run its exact WAKE_ACK_REQUIRED --ack-through command before ending the turn.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━]
+after ack --claude: exit=2 output=[●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  TURN WOULD END WITH A CAPTAIN NOTE UNREAD
+●  1 captain inbox note wake(s) in the wake queue have waited more than 1s unacknowledged (oldest: 33s), whatever watcher health says.
+●  Run bin/fm-wake-drain.sh first, handle the wake, then run its exact WAKE_ACK_REQUIRED --ack-through command before ending the turn.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━]
+block-state file present? yes
+(same note applies to live-guard-bound-notice-and-ack.txt scenario E)

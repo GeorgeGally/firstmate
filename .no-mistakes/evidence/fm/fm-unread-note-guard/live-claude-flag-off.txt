@@ -1,0 +1,16 @@
+# Live Claude Code primary (lab tmux socket fm-lab, FM_HOME=lab, FM_TURNEND_NOTE_MAX_AGE=5), plain clone of 37793ab8
+# config dir: [startup-memory-budget]  (no unread-note-backstop)
+# wake queue at turn start:
+1791971556	2	check	inbox:1791971556-dlDAbo	check: captain inbox note 1791971556-dlDAbo - live lab note two
+# pane after turn:
+ ▐▛███▛█   Claude Code v2.1.299
+▝▜██████▀  Opus 5.5 · Claude Max
+ ▝▝   ▝▝   /private/var/folders/m2/l0h0sk052yng2xk9n51n8y000000gn/T/fm-gatewk.C9z6Cw/fm
+❯ Lab test: reply with exactly the word PONG and nothing else. Do not run any tools.
+⏺ PONG
+✻ Crunched for 4s · done 5:52 PM
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+❯ 
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   Opus 5.5  ctx:6%
+  ⏵⏵ auto mode on (shift+tab to cycle) · ← 1 agent

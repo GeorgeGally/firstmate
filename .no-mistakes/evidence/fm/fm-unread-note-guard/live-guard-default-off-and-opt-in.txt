@@ -1,0 +1,32 @@
+## Setup: plain clone of target 37793ab8 at $W/fm, marked lab home $LAB (bin/fm-lab-home.sh create)
+$ bin/fm-inbox.sh note 'lab captain note: please read me'
+queued 1791971387-uPuz1z
+  lab captain note: please read me
+  firstmate will pick this up at its next check.
+$ cat $LAB/state/.wake-queue
+1791971387	1	check	inbox:1791971387-uPuz1z	check: captain inbox note 1791971387-uPuz1z - lab captain note: please read me
+$ ls $LAB/config
+(no unread-note-backstop file)
+
+## Scenario A: default-off (no config/unread-note-backstop), overdue note
+$ guard (default/codex mode), stop_hook_active=false
+exit=0 output=[]
+$ guard --claude, stop_hook_active=false
+exit=0 output=[]
+block-state file present? no
+
+## Scenario B: opt in with touch $LAB/config/unread-note-backstop
+$ guard (default/codex mode), stop_hook_active=false
+exit=2
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  TURN WOULD END WITH A CAPTAIN NOTE UNREAD
+●  1 captain inbox note wake(s) in the wake queue have waited more than 1s unacknowledged (oldest: 4s), whatever watcher health says.
+●  Run bin/fm-wake-drain.sh first, handle the wake, then run its exact WAKE_ACK_REQUIRED --ack-through command before ending the turn.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+$ guard --claude, stop_hook_active=false
+exit=2
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  TURN WOULD END WITH A CAPTAIN NOTE UNREAD
+●  1 captain inbox note wake(s) in the wake queue have waited more than 1s unacknowledged (oldest: 4s), whatever watcher health says.
+●  Run bin/fm-wake-drain.sh first, handle the wake, then run its exact WAKE_ACK_REQUIRED --ack-through command before ending the turn.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

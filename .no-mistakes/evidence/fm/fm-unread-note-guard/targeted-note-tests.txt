@@ -1,0 +1,7 @@
+ok - fm-turnend-guard --claude: an overdue unread captain note blocks the stop while the watcher looks healthy
+ok - fm-turnend-guard --claude: a young or acknowledged captain note does not block
+ok - fm-turnend-guard: an overdue captain note blocks an idle home
+ok - fm-turnend-guard: the away/quiet note exemption needs a live daemon that owns supervision
+ok - fm-turnend-guard: unread captain note backstop is off when config/unread-note-backstop is absent
+ok - fm-turnend-guard --claude: the unread-note block is bounded, notices its fall-through, and restarts on a new overdue note
+ok - fm-turnend-guard --claude: a still-unread note blocks again on every later turn

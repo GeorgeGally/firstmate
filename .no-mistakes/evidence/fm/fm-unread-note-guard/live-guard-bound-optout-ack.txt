@@ -1,0 +1,37 @@
+## Scenario C: opted in, --claude per-turn bound (FM_CLAUDE_TURNEND_BLOCK_BUDGET default 3) ends with visible notice, not silence
+re-block stop 1 (stop_hook_active=true): exit=2 first-line=●  TURN WOULD END WITH A CAPTAIN NOTE UNREAD
+re-block stop 2 (stop_hook_active=true): exit=2 first-line=●  TURN WOULD END WITH A CAPTAIN NOTE UNREAD
+re-block stop 3 (stop_hook_active=true): exit=0 first-line=
+(stop 1 of the turn was the stop_hook_active=false call in scenario B, so these continue that turn)
+$ cat $LAB/state/.turnend-note-blocks
+lab-s1 1
+4
+Next turn (stop_hook_active=false) re-blocks:
+exit=2 ●  TURN WOULD END WITH A CAPTAIN NOTE UNREAD
+
+## Scenario D (adversarial): opt out again by removing config/unread-note-backstop while block state is still recorded
+block state still on disk: lab-s1 1|1|
+default mode: exit=0 output=[]
+--claude stop_hook_active=true: exit=0 output=[]
+--claude stop_hook_active=false: exit=0 output=[]
+
+## Scenario E: opted in, drain + acknowledge clears the block
+before drain: exit=2
+$ bin/fm-wake-drain.sh
+1791971387	1	check	inbox:1791971387-uPuz1z	check: captain inbox note 1791971387-uPuz1z - lab captain note: please read me
+WAKE_ACK_REQUIRED: after handling completes run bin/fm-wake-drain.sh --ack-through 1 --recovery-generation 14323.1791971388.JpujzR
+$ bin/fm-wake-drain.sh --ack-through 1
+usage: fm-wake-drain.sh [--ack-through SEQUENCE --recovery-generation GENERATION]
+queue now: [1791971387	1	check	inbox:1791971387-uPuz1z	check: captain inbox note 1791971387-uPuz1z - lab captain note: please read me]
+after ack default mode: exit=2 output=[●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  TURN WOULD END WITH A CAPTAIN NOTE UNREAD
+●  1 captain inbox note wake(s) in the wake queue have waited more than 1s unacknowledged (oldest: 20s), whatever watcher health says.
+●  Run bin/fm-wake-drain.sh first, handle the wake, then run its exact WAKE_ACK_REQUIRED --ack-through command before ending the turn.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━]
+after ack --claude: exit=2 output=[●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  TURN WOULD END WITH A CAPTAIN NOTE UNREAD
+●  1 captain inbox note wake(s) in the wake queue have waited more than 1s unacknowledged (oldest: 20s), whatever watcher health says.
+●  Run bin/fm-wake-drain.sh first, handle the wake, then run its exact WAKE_ACK_REQUIRED --ack-through command before ending the turn.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━]
+
+NOTE: Scenario E above failed only because the test harness ran under zsh, which did not word-split "$ack" and dropped --recovery-generation (usage error, ack exit 2). Re-run under bash in live-guard-ack-clears.txt: ack exit 0, queue empty, guard exit 0 in both modes.
