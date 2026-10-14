@@ -636,6 +636,7 @@ The flag is a home-local supervision-noise preference and is not inherited by se
 
 The optional local, gitignored `config/unread-note-backstop` presence flag enables a default-off turn-end check that blocks while a captain inbox note wake is overdue and unacknowledged.
 Without the file, unread captain notes do not affect turn ends.
+The flag is home-local and is not inherited by secondmate homes.
 `FM_TURNEND_NOTE_MAX_AGE` sets the age threshold, and [`turnend-guard.md`](turnend-guard.md#unread-captain-notes) owns the guard behavior.
 
 ## Parked-gate wait deferral (config/wedge-defer-parked-gate)
